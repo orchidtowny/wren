@@ -9,7 +9,7 @@ H='\033[1;32m'
 R='\033[0m'
 # static
 PREFIX="[wren]"
-VERSION="0.0.2"
+VERSION="0.0.3"
 # list admin accounts that will be added to the containers
 declare -a admins=("blueb" "kurbiis")
 # make each name the name of the directory that is inh /home/servers/
@@ -47,6 +47,9 @@ elif [[ $1 == "restart" ]]; then
 elif [[ $1 == "stop" ]]; then
     echo -e "${A}$PREFIX${R} stopping $2"
     sudo -u wren screen -S $2 -X eval 'stuff "stop\015"'
+elif [[ $1 == "command" ]]; then
+    echo -e "${A}$PREFIX${R} running command '${@:3}' on $2"
+    sudo -u wren screen -S $2 -X eval 'stuff "'"${*:3}"'\015"'
 elif [[ $1 == "kill" ]]; then
     read -r -p "$(echo -e ${A}$PREFIX${R}" you're about to kill a process ("$2"). this could lead to data corruption, would you like to continue? "${H}"[y/N]"${R}) " response
     case "$response" in
