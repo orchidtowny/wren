@@ -9,13 +9,14 @@ H='\033[1;32m'
 R='\033[0m'
 # static
 PREFIX="[wren]"
+VERSION="0.0.2"
 # list admin accounts that will be added to the containers
 declare -a admins=("blueb" "kurbiis")
 # make each name the name of the directory that is inh /home/servers/
 declare -a servers=("coco" "cobalt-web" "cobalt-api")
 
 if [[ $1 == "help" ]]; then
-    echo -e "${A}$PREFIX${R} ${J}wren launcher v0.0.1"
+    echo -e "${A}$PREFIX${R} ${J}wren launcher v${VERSION}"
     echo -e "${A}$PREFIX${R} (c) 2023 ihateblueb"
     echo -e "${A}$PREFIX${R} ${J}commands:"
     echo -e "${A}$PREFIX${R}    help    ${G}             ${R}       show this help menu"
@@ -65,9 +66,7 @@ elif [[ $1 == "console" ]]; then
     echo -e "${A}$PREFIX${R} to exit a container always use ${H}ctrl + a${R} & ${H}d${R}."
     echo -e "${A}$PREFIX${R} to copy to clipboard always use ${H}ctrl + shift + c${R}."
     echo -e "${A}$PREFIX${R} "
-    echo -e "${A}$PREFIX${R} ${G}continuing in 5 seconds..."
-    echo -e "${A}$PREFIX${R} "
-    sleep 5;
+    read -r -p "$(echo -e ${A}$PREFIX${R}" "${G}"press enter to continue")"
     sudo -u wren screen -R $2
 elif [[ $1 == "list" ]]; then
     echo -e "${A}$PREFIX${R} here's all the containers"
