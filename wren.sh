@@ -9,11 +9,11 @@ H='\033[1;32m'
 R='\033[0m'
 # static
 PREFIX="[wren]"
-VERSION="0.0.3"
+VERSION="0.0.4"
 # list admin accounts that will be added to the containers
 declare -a admins=("blueb" "kurbiis")
 # make each name the name of the directory that is inh /home/servers/
-declare -a servers=("coco" "cobalt-web" "cobalt-api")
+declare -a servers=("coco" "cobalt-web" "cobalt-api" "wiki" "website" "proxy" "hub")
 
 if [[ $1 == "help" ]]; then
     echo -e "${A}$PREFIX${R} ${J}wren launcher v${VERSION}"
