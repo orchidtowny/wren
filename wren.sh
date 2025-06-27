@@ -9,15 +9,17 @@ H='\033[1;32m'
 R='\033[0m'
 # static
 PREFIX="[wren]"
-VERSION="0.0.4"
-# list admin accounts that will be added to the containers
-declare -a admins=("blueb" "kurbiis")
+VERSION="0.0.5"
+# directory for servers
+SERVER_DIR="/home/minecraft"
+# admin users to give permissions to use these sessions
+declare -a admins=("minecraft")
 # make each name the name of the directory that is inh /home/servers/
-declare -a servers=("coco" "cobalt-web" "cobalt-api" "wiki" "website" "proxy" "hub")
+declare -a servers=("allium")
 
 if [[ $1 == "help" ]]; then
     echo -e "${A}$PREFIX${R} ${J}wren launcher v${VERSION}"
-    echo -e "${A}$PREFIX${R} (c) 2023 ihateblueb"
+    echo -e "${A}$PREFIX${R} (c) 2023-2025 ihateblueb"
     echo -e "${A}$PREFIX${R} ${J}commands:"
     echo -e "${A}$PREFIX${R}    help    ${G}             ${R}       show this help menu"
     echo -e "${A}$PREFIX${R}    list    ${G}             ${R}       show all running containers"
@@ -33,10 +35,10 @@ if [[ $1 == "help" ]]; then
     done
 elif [[ $1 == "start" ]]; then
     echo -e "${A}$PREFIX${R} starting $2"
-    sudo -u wren screen -S $2 -X stuff 'cd /home/servers/'$2'\r sh start.sh\r'
+    sudo -u wren screen -S $2 -X stuff 'cd '$SERVER_DIR'/'$2'\r sh start.sh\r'
 elif [[ $1 == "spawn" ]]; then
     echo -e "${A}$PREFIX${R} spawning $2"
-    sudo -u wren screen -dmS $2 bash -c 'cd /home/servers/'$2'; sh start.sh; exec bash;'
+    sudo -u wren screen -dmS $2 bash -c 'cd '$SERVER_DIR'/'$2'; sh start.sh; exec bash;'
     sudo -u wren screen -S $2 -X multiuser on
     for admin in ${admins[@]}; do
         sudo -u wren screen -S $2 -X acladd $admin
