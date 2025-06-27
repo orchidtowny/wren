@@ -9,11 +9,10 @@ H='\033[1;32m'
 R='\033[0m'
 # static
 PREFIX="[wren]"
-VERSION="0.0.5"
+VERSION="0.0.6"
 # directory for servers
 SERVER_DIR="/home/minecraft"
-# admin users to give permissions to use these sessions
-declare -a admins=("minecraft")
+WREN_USER="minecraft"
 # make each name the name of the directory that is inh /home/servers/
 declare -a servers=("allium")
 
@@ -35,29 +34,29 @@ if [[ $1 == "help" ]]; then
     done
 elif [[ $1 == "start" ]]; then
     echo -e "${A}$PREFIX${R} starting $2"
-    sudo -u wren screen -S $2 -X stuff 'cd '$SERVER_DIR'/'$2'\r sh start.sh\r'
+    sudo -u $WREN_USER screen -S $2 -X stuff 'cd '$SERVER_DIR'/'$2'\r sh start.sh\r'
 elif [[ $1 == "spawn" ]]; then
     echo -e "${A}$PREFIX${R} spawning $2"
-    sudo -u wren screen -dmS $2 bash -c 'cd '$SERVER_DIR'/'$2'; sh start.sh; exec bash;'
-    sudo -u wren screen -S $2 -X multiuser on
+    sudo -u $WREN_USER screen -dmS $2 bash -c 'cd '$SERVER_DIR'/'$2'; sh start.sh; exec bash;'
+    sudo -u $WREN_USER screen -S $2 -X multiuser on
     for admin in ${admins[@]}; do
-        sudo -u wren screen -S $2 -X acladd $admin
+        sudo -u $WREN_USER screen -S $2 -X acladd $admin
     done
 elif [[ $1 == "restart" ]]; then
     echo -e "${A}$PREFIX${R} restarting $2"
-    sudo -u wren screen -S $2 -X eval 'stuff "restart\015"'
+    sudo -u $WREN_USER screen -S $2 -X eval 'stuff "restart\015"'
 elif [[ $1 == "stop" ]]; then
     echo -e "${A}$PREFIX${R} stopping $2"
-    sudo -u wren screen -S $2 -X eval 'stuff "stop\015"'
+    sudo -u $WREN_USER screen -S $2 -X eval 'stuff "stop\015"'
 elif [[ $1 == "command" ]]; then
     echo -e "${A}$PREFIX${R} running command '${@:3}' on $2"
-    sudo -u wren screen -S $2 -X eval 'stuff "'"${*:3}"'\015"'
+    sudo -u $WREN_USER screen -S $2 -X eval 'stuff "'"${*:3}"'\015"'
 elif [[ $1 == "kill" ]]; then
     read -r -p "$(echo -e ${A}$PREFIX${R}" you're about to kill a process ("$2"). this could lead to data corruption, would you like to continue? "${H}"[y/N]"${R}) " response
     case "$response" in
     [yY][eE][sS] | [yY])
         echo -e "${A}$PREFIX${R} killed process $2 and removed it's container."
-    sudo -u wren screen -S $2 -X kill
+    sudo -u $WREN_USER screen -S $2 -X kill
         ;;
     *)
         echo -e "${A}$PREFIX${R} cancelling, $2 was not killed."
@@ -72,10 +71,10 @@ elif [[ $1 == "console" ]]; then
     echo -e "${A}$PREFIX${R} to copy to clipboard always use ${H}ctrl + shift + c${R}."
     echo -e "${A}$PREFIX${R} "
     read -r -p "$(echo -e ${A}$PREFIX${R}" "${G}"press enter to continue")"
-    sudo -u wren screen -R $2
+    sudo -u $WREN_USER screen -R $2
 elif [[ $1 == "list" ]]; then
     echo -e "${A}$PREFIX${R} here's all the containers"
-    sudo -u wren screen -ls
+    sudo -u $WREN_USER screen -ls
 else
     echo -e "${A}$PREFIX${R} unknown command. see ${H}$0 help${R} for more"
 fi
