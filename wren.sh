@@ -1,7 +1,7 @@
 #!/bin/bash
 # wren launcher
 PREFIX="[wren]"
-VERSION="1.0-ALPHA"
+VERSION="2.0"
 
 # Colours
 E="\033[31m"
@@ -20,7 +20,7 @@ declare -a servers=("magnolia")
 
 if [[ $1 == "help" ]]; then
     echo -e "${W}$PREFIX${R} ${J}Wren launcher v${VERSION}${R}"
-    echo -e "${W}$PREFIX${R} (c) 2026 orchidtowny"
+    echo -e "${W}$PREFIX${R} (c) 2023-2026 orchidtowny"
     echo -e "${W}$PREFIX${R} ${J}commands:${R}"
     echo -e "${W}$PREFIX${R}    help    ${G}             ${R}       Show this help menu"
     echo -e "${W}$PREFIX${R}    list    ${G}             ${R}       Show all running containers"
