@@ -1,6 +1,6 @@
 #!/bin/bash
-# pigeon launcher
-PREFIX="[Pigeon]"
+# wren launcher
+PREFIX="[wren]"
 VERSION="1.0-ALPHA"
 
 # Colours
@@ -14,16 +14,15 @@ G="\033[1;37m"
 
 
 # directory for servers
-pigeon_USER="Pigeon"
-SERVER_DIR=$(getent passwd "$pigeon_USER" | cut -d: -f6)
+wren_USER="wren"
+SERVER_DIR=$(getent passwd "$wren_USER" | cut -d: -f6)
 declare -a servers=("magnolia")
 
 if [[ $1 == "help" ]]; then
-    echo -e "${W}$PREFIX${R} ${J}Pigeon launcher v${VERSION}${R}"
-    echo -e "${W}$PREFIX${R} (c) 2026 kurbiis"
+    echo -e "${W}$PREFIX${R} ${J}Wren launcher v${VERSION}${R}"
+    echo -e "${W}$PREFIX${R} (c) 2026 orchidtowny"
     echo -e "${W}$PREFIX${R} ${J}commands:${R}"
     echo -e "${W}$PREFIX${R}    help    ${G}             ${R}       Show this help menu"
-    echo -e "${W}$PREFIX${R}    setup   ${G}             ${R}       Setup pigeon"
     echo -e "${W}$PREFIX${R}    list    ${G}             ${R}       Show all running containers"
     echo -e "${W}$PREFIX${R}    spawn   ${G}(server name)${R}       Run start script of server in new container"
     echo -e "${W}$PREFIX${R}    start   ${G}(server name)${R}       Run start script of server in current container"
@@ -37,29 +36,29 @@ if [[ $1 == "help" ]]; then
     done
 elif [[ $1 == "spawn" ]]; then
     echo -e "${W}$PREFIX${R} Spawning $2..."
-    sudo -u "$pigeon_USER" tmux -S /tmp/tmux_$2 new-session -d -s "$2" -c "$SERVER_DIR/$2" "sh start.sh"
+    sudo -u "$wren_USER" tmux -S /tmp/tmux_$2 new-session -d -s "$2" -c "$SERVER_DIR/$2" "sh start.sh"
     sudo chgrp admin /tmp/tmux_$2
     sudo chmod 770 /tmp/tmux_$2
 
 elif [[ $1 == "start" ]]; then
     echo -e "${W}$PREFIX${R} Starting $2..."
-    sudo -u "$pigeon_USER" tmux -S /tmp/tmux_$2 send-keys -t "$2" "cd $SERVER_DIR/$2" C-m
-    sudo -u "$pigeon_USER" tmux -S /tmp/tmux_$2 send-keys -t "$2" "sh start.sh" C-m
+    sudo -u "$wren_USER" tmux -S /tmp/tmux_$2 send-keys -t "$2" "cd $SERVER_DIR/$2" C-m
+    sudo -u "$wren_USER" tmux -S /tmp/tmux_$2 send-keys -t "$2" "sh start.sh" C-m
 
 elif [[ $1 == "stop" ]]; then
     echo -e "${W}$PREFIX${R} Stopping $2..."
-    sudo -u "$pigeon_USER" tmux -S /tmp/tmux_$2 send-keys -t "$2" "stop" C-m
+    sudo -u "$wren_USER" tmux -S /tmp/tmux_$2 send-keys -t "$2" "stop" C-m
 
 elif [[ $1 == "restart" ]]; then
     echo -e "${W}$PREFIX${R} Restarting $2..."
-    sudo -u "$pigeon_USER" tmux -S /tmp/tmux_$2 send-keys -t "$2" "restart" C-m
+    sudo -u "$wren_USER" tmux -S /tmp/tmux_$2 send-keys -t "$2" "restart" C-m
 
 elif [[ $1 == "kill" ]]; then
     read -r -p "$(echo -e "${W}${PREFIX}${R} you're about to ${E}${B}kill${R} a process ($2). ${E}${B}this could lead to data corruption${R}, would you like to continue? [y/N] ")" ans
 
     if [[ "${ans,,}" == "y" ]]; then
         echo -e "${W}${PREFIX}${R} Killing $2..."
-        sudo -u "$pigeon_USER" tmux -S /tmp/tmux_$2 kill-session -t "$2"
+        sudo -u "$wren_USER" tmux -S /tmp/tmux_$2 kill-session -t "$2"
     elif [[ "${ans,,}" == "n" ]]; then
         echo -e "${W}${PREFIX}${R} Did not kill $2..."
     else 
@@ -68,7 +67,7 @@ elif [[ $1 == "kill" ]]; then
 
 elif [[ $1 == "list" ]]; then
     echo -e "${W}$PREFIX${R} Here's all the containers."
-    sudo -u "$pigeon_USER" tmux -S /tmp/tmux_$2 list-sessions
+    sudo -u "$wren_USER" tmux -S /tmp/tmux_$2 list-sessions
 
 elif [[ $1 == "console" ]]; then
     echo -e "${W}$PREFIX${R} opening console of $2"
@@ -80,7 +79,7 @@ elif [[ $1 == "console" ]]; then
     echo -e "${W}$PREFIX${R} "
     read -r -p "$(echo -e ${W}$PREFIX${R}" "${G}"press enter to continue")"
 
-    sudo -u "$pigeon_USER" tmux -S /tmp/tmux_$2 attach -t "$2"
+    sudo -u "$wren_USER" tmux -S /tmp/tmux_$2 attach -t "$2"
 
 else
     echo -e "${W}$PREFIX${R} Unknown command. See ${S}$0 help${R} for more"
