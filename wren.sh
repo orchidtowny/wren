@@ -66,8 +66,18 @@ elif [[ $1 == "kill" ]]; then
     fi
 
 elif [[ $1 == "list" ]]; then
-    echo -e "${W}$PREFIX${R} Here's all the containers."
-    sudo -u "$wren_USER" tmux -S /tmp/tmux_$2 list-sessions
+    echo -e "${W}$WREN_PREFIX${R} Here's all the containers."
+
+    for server in "${servers[@]}"; do
+        socket="/tmp/tmux_$server"
+
+        if [[ -S "$socket" ]]; then
+            echo -e "${S}$WREN_PREFIX${R} $server is running:"
+            sudo -u "$WREN_USER" tmux -S "$socket" list-sessions
+        else
+            echo -e "${W}$WREN_PREFIX${R} $server is not running."
+        fi
+    done
 
 elif [[ $1 == "console" ]]; then
     echo -e "${W}$PREFIX${R} opening console of $2"
