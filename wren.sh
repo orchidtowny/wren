@@ -1,7 +1,9 @@
 #!/bin/bash
+
 # wren launcher
 PREFIX="[wren]"
-VERSION="2.0"
+VERSION="3.0-ALPHA"
+
 
 # Colours
 E="\033[31m"
@@ -12,12 +14,26 @@ B="\033[1m"
 J='\033[1;34m'
 G="\033[1;37m"
 
+# Configuration
+CONFIG_FILE="$HOME/.config/wren/wren.conf"
+GAME_DIR="/srv"
+WREN_USER="$(whoami)"
 
-# directory for servers
-wren_USER="wren"
-SERVER_DIR=$(getent passwd "$wren_USER" | cut -d: -f6)
-declare -a servers=("magnolia")
+if [[ -f "$CONFIG_FILE" ]]; then
+    source "$CONFIG_FILE"
+else
+    echo -e "${PREFIX} Config file not found, using defaults which are:\n"
+    echo -e "${PREFIX} The user currently being used is '$(whoami)'"
+    echo -e "${PREFIX} The server directory currently being used is '$GAME_DIR'"
+fi
 
+
+if [[ ! -d "$GAME_DIR" ]]; then
+    echo -e "${E}${PREFIX}${R} Your server directory does not exist: $GAME_DIR"
+    exit 1
+fi
+
+# Commands
 if [[ $1 == "help" ]]; then
     echo -e "${W}$PREFIX${R} ${J}Wren launcher v${VERSION}${R}"
     echo -e "${W}$PREFIX${R} (c) 2023-2026 orchidtowny"
@@ -36,29 +52,29 @@ if [[ $1 == "help" ]]; then
     done
 elif [[ $1 == "spawn" ]]; then
     echo -e "${W}$PREFIX${R} Spawning $2..."
-    sudo -u "$wren_USER" tmux -S /tmp/tmux_$2 new-session -d -s "$2" -c "$SERVER_DIR/$2" "sh start.sh"
+    sudo -u "$WREN_USER" tmux -S /tmp/tmux_$2 new-session -d -s "$2" -c "$GAME_DIR/$2" "sh start.sh"
     sudo chgrp admin /tmp/tmux_$2
     sudo chmod 770 /tmp/tmux_$2
 
 elif [[ $1 == "start" ]]; then
     echo -e "${W}$PREFIX${R} Starting $2..."
-    sudo -u "$wren_USER" tmux -S /tmp/tmux_$2 send-keys -t "$2" "cd $SERVER_DIR/$2" C-m
-    sudo -u "$wren_USER" tmux -S /tmp/tmux_$2 send-keys -t "$2" "sh start.sh" C-m
+    sudo -u "$WREN_USER" tmux -S /tmp/tmux_$2 send-keys -t "$2" "cd $GAME_DIR/$2" C-m
+    sudo -u "$WREN_USER" tmux -S /tmp/tmux_$2 send-keys -t "$2" "sh start.sh" C-m
 
 elif [[ $1 == "stop" ]]; then
     echo -e "${W}$PREFIX${R} Stopping $2..."
-    sudo -u "$wren_USER" tmux -S /tmp/tmux_$2 send-keys -t "$2" "stop" C-m
+    sudo -u "$WREN_USER" tmux -S /tmp/tmux_$2 send-keys -t "$2" "stop" C-m
 
 elif [[ $1 == "restart" ]]; then
     echo -e "${W}$PREFIX${R} Restarting $2..."
-    sudo -u "$wren_USER" tmux -S /tmp/tmux_$2 send-keys -t "$2" "restart" C-m
+    sudo -u "$WREN_USER" tmux -S /tmp/tmux_$2 send-keys -t "$2" "restart" C-m
 
 elif [[ $1 == "kill" ]]; then
     read -r -p "$(echo -e "${W}${PREFIX}${R} you're about to ${E}${B}kill${R} a process ($2). ${E}${B}this could lead to data corruption${R}, would you like to continue? [y/N] ")" ans
 
     if [[ "${ans,,}" == "y" ]]; then
         echo -e "${W}${PREFIX}${R} Killing $2..."
-        sudo -u "$wren_USER" tmux -S /tmp/tmux_$2 kill-session -t "$2"
+        sudo -u "$WREN_USER" tmux -S /tmp/tmux_$2 kill-session -t "$2"
     elif [[ "${ans,,}" == "n" ]]; then
         echo -e "${W}${PREFIX}${R} Did not kill $2..."
     else 
@@ -89,7 +105,7 @@ elif [[ $1 == "console" ]]; then
     echo -e "${W}$PREFIX${R} "
     read -r -p "$(echo -e ${W}$PREFIX${R}" "${G}"press enter to continue")"
 
-    sudo -u "$wren_USER" tmux -S /tmp/tmux_$2 attach -t "$2"
+    sudo -u "$WREN_USER" tmux -S /tmp/tmux_$2 attach -t "$2"
 
 else
     echo -e "${W}$PREFIX${R} Unknown command. See ${S}$0 help${R} for more"
